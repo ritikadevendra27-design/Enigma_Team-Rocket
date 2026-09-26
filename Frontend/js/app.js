@@ -60,22 +60,48 @@ async function render() {
         window.scrollTo(0, 0);
     } catch (e) {
         console.error("Render error:", e);
-        app.innerHTML = `<div class="container text-center py-20"><h1 class="text-error mb-4">Oops! Something went wrong.</h1><button class="btn btn-primary" onclick="navigate('landing')">Go Home</button></div>`;
+        app.innerHTML = `<div class="container text-center" style="padding: 5rem 0;"><h1 class="mb-4" style="color:var(--error);">Oops! Something went wrong.</h1><button class="btn btn-primary" onclick="navigate('landing')">Go Home</button></div>`;
     }
 }
 
 // Handlers
 async function handleLogin(e) {
     e.preventDefault();
-    const email = e.target.querySelector('input[type="email"]').value;
+    const email = document.getElementById('login-email')?.value || e.target.querySelector('input[type="email"]')?.value || 'ecopack.generator@circulareconomy.org';
+    const password = document.getElementById('login-password')?.value || 'Password123!';
     const btn = e.target.querySelector('button[type="submit"]');
     
-    btn.disabled = true;
-    btn.innerHTML = 'Processing...';
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = 'Connecting to backend...';
+    }
     
-    await API.login(email, 'password');
-    Components.Toast('Successfully logged in!');
-    navigate('dashboard');
+    const res = await API.login(email, password);
+    if (res.success) {
+        Components.Toast(`Signed in as ${STORE.user.name}`);
+        navigate('dashboard');
+    }
+}
+
+async function handleSignup(e) {
+    e.preventDefault();
+    const name = document.getElementById('su-name')?.value;
+    const email = document.getElementById('su-email')?.value;
+    const password = document.getElementById('su-password')?.value || 'Password123!';
+    const role = document.getElementById('su-role')?.value || 'generator';
+    const location = document.getElementById('su-location')?.value || 'Mumbai';
+
+    const btn = e.target.querySelector('button[type="submit"]');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = 'Creating account...';
+    }
+
+    const res = await API.signup({ name, email, password, role, location });
+    if (res.success) {
+        Components.Toast(`Account created for ${STORE.user.name}!`);
+        navigate('dashboard');
+    }
 }
 
 function handleLogout() {
@@ -87,8 +113,10 @@ function handleLogout() {
 async function handlePostMaterial(e) {
     e.preventDefault();
     const btn = e.target.querySelector('button[type="submit"]');
-    btn.disabled = true;
-    btn.innerHTML = 'Finding Matches...';
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = 'Submitting to ledger...';
+    }
     
     const data = {
         name: document.getElementById('pm-name').value,
@@ -97,7 +125,8 @@ async function handlePostMaterial(e) {
         unit: document.getElementById('pm-unit').value,
         condition: document.getElementById('pm-condition').value,
         location: document.getElementById('pm-loc').value,
-        image: uploadedImageBase64 || 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=400&q=80'
+        description: document.getElementById('pm-desc')?.value || '',
+        image: uploadedImageBase64 || null
     };
     
     // Reset image state for next post
@@ -105,7 +134,7 @@ async function handlePostMaterial(e) {
     
     const res = await API.postMaterial(data);
     if(res.success) {
-        Components.Toast('Material listed successfully!');
+        Components.Toast('Material listed & synced with backend!');
         navigate('material-details', res.id);
     }
 }
@@ -116,35 +145,86 @@ window.handleImageUpload = function(e) {
     const file = e.target.files[0];
     if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
-            uploadedImageBase64 = e.target.result;
-            document.getElementById('pm-image-preview').src = uploadedImageBase64;
-            document.getElementById('pm-image-preview').style.display = 'block';
-            document.getElementById('pm-image-placeholder').style.display = 'none';
-            document.getElementById('pm-image-remove').style.display = 'block';
-        }
+        reader.onload = function(evt) {
+            uploadedImageBase64 = evt.target.result;
+            const preview = document.getElementById('pm-image-preview');
+            const placeholder = document.getElementById('pm-image-placeholder');
+            const removeBtn = document.getElementById('pm-image-remove');
+            if (preview) {
+                preview.src = uploadedImageBase64;
+                preview.style.display = 'block';
+            }
+            if (placeholder) placeholder.style.display = 'none';
+            if (removeBtn) removeBtn.style.display = 'block';
+        };
         reader.readAsDataURL(file);
     }
-}
+};
 
 window.removeImage = function() {
     uploadedImageBase64 = null;
-    document.getElementById('pm-image').value = '';
-    document.getElementById('pm-image-preview').style.display = 'none';
-    document.getElementById('pm-image-placeholder').style.display = 'block';
-    document.getElementById('pm-image-remove').style.display = 'none';
-}
+    const input = document.getElementById('pm-image');
+    if (input) input.value = '';
+    const preview = document.getElementById('pm-image-preview');
+    const placeholder = document.getElementById('pm-image-placeholder');
+    const removeBtn = document.getElementById('pm-image-remove');
+    if (preview) preview.style.display = 'none';
+    if (placeholder) placeholder.style.display = 'block';
+    if (removeBtn) removeBtn.style.display = 'none';
+};
 
 async function handleRequestMaterial(id) {
     const res = await API.requestMaterial(id);
     if(res.success) {
-        Components.Toast('Exchange requested! Waiting for owner approval.');
+        Components.Toast('Exchange requested on ledger! Awaiting verification.');
         navigate('exchanges');
     }
 }
 
+async function handleExchangeAction(exchangeId, newStatus) {
+    const res = await API.updateExchangeStatus(exchangeId, newStatus);
+    if (res.success) {
+        Components.Toast(`Exchange status updated to ${newStatus}!`);
+        navigate('exchanges');
+    }
+}
+
+async function handleMarketFilter() {
+    const searchVal = (document.getElementById('market-search')?.value || '').toLowerCase();
+    const catVal = document.getElementById('market-category')?.value || 'ALL';
+    const sortVal = document.getElementById('market-sort')?.value || 'match';
+
+    const allMaterials = await API.getMaterials();
+    let filtered = allMaterials.filter(m => {
+        const matchesSearch = !searchVal || 
+            (m.name || '').toLowerCase().includes(searchVal) ||
+            (m.type || '').toLowerCase().includes(searchVal) ||
+            (m.location || '').toLowerCase().includes(searchVal) ||
+            (m.condition || '').toLowerCase().includes(searchVal);
+
+        const matchesCat = catVal === 'ALL' || (m.type || '').toLowerCase().includes(catVal.toLowerCase());
+        return matchesSearch && matchesCat;
+    });
+
+    if (sortVal === 'match') {
+        filtered.sort((a, b) => (b.match || 0) - (a.match || 0));
+    }
+
+    const grid = document.getElementById('market-grid');
+    if (grid) {
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding:3rem;" class="card"><p class="text-muted">No materials found matching your criteria.</p></div>`;
+        } else {
+            grid.innerHTML = filtered.map(m => Components.MaterialCard(m)).join('');
+        }
+    }
+}
+
 // Initial Load
-window.addEventListener('load', () => {
+window.addEventListener('load', async () => {
+    // Attempt backend session sync
+    await API.init();
+
     // Check hash for initial route
     const hash = window.location.hash.replace('#', '');
     if (hash) {
@@ -152,7 +232,7 @@ window.addEventListener('load', () => {
         currentPage = parts[0];
         if (parts.length > 1) currentParam = parts[1];
     } else {
-        currentPage = 'landing';
+        currentPage = 'dashboard';
     }
     render();
 });
@@ -166,6 +246,6 @@ window.addEventListener('hashchange', () => {
             navigate(parts[0], parts[1]);
         }
     } else {
-        navigate('landing');
+        navigate('dashboard');
     }
 });

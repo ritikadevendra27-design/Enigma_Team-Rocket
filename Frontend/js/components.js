@@ -77,8 +77,8 @@ const Components = {
     `,
 
     MaterialCard: (m) => `
-        <div class="card p-0 overflow-hidden cursor-pointer" style="padding:0; display:flex; flex-direction:column;" onclick="navigate('material-details', ${m.id})">
-            <img src="${m.image}" alt="${m.name}" class="material-img" style="border-bottom-left-radius:0; border-bottom-right-radius:0;">
+        <div class="card p-0 overflow-hidden cursor-pointer" style="padding:0; display:flex; flex-direction:column;" onclick="navigate('material-details', '${m.id}')">
+            <img src="${m.image}" alt="${m.name}" class="material-img" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=600&q=80';" style="border-bottom-left-radius:0; border-bottom-right-radius:0;">
             <div style="padding: 1.5rem;">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start;" class="mb-2">
                     <h3 class="text-xl font-bold">${m.name}</h3>
@@ -91,7 +91,7 @@ const Components = {
                         ${m.location} (${m.distance})
                     </div>
                 </div>
-                <button class="btn btn-outline btn-block text-sm" onclick="event.stopPropagation(); navigate('material-details', ${m.id})">View Details</button>
+                <button class="btn btn-outline btn-block text-sm" onclick="event.stopPropagation(); navigate('material-details', '${m.id}')">View Details</button>
             </div>
         </div>
     `,

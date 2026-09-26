@@ -65,6 +65,10 @@ export const ListingCard = ({ listing, onEdit, onDelete, onSmartMatch, onRequest
             <img
               src={listing.image_url}
               alt={listing.material_type}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=800&q=80';
+              }}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
               loading="lazy"
             />
