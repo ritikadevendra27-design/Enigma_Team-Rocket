@@ -1,0 +1,72 @@
+{
+  "project": "GreenLoop: Smart Circular Economy & Waste Exchange Platform",
+  "hackathon": "CSI Enigma 5.0",
+  "team": "Team Rocket",
+  "version": "1.0.0",
+  "description": "Structured RAG document collection for industrial waste exchange, matching rules, carbon accounting, and marketplace listings.",
+  "documents": [
+    {
+      "id": "doc-001-mission",
+      "category": "platform_overview",
+      "title": "Platform Overview & Mission",
+      "tags": ["circular economy", "industrial symbiosis", "waste exchange", "greenloop"],
+      "content": "GreenLoop is a Smart Circular Economy and Industrial Waste Exchange Platform developed for CSI Enigma 5.0 by Team Rocket. The platform connects waste generators (factories, institutions, workshops) with verified buyers and recyclers. It features real-time material listings, transparent 100% rule-based matching, end-to-end exchange transaction tracking, and instant verified carbon accounting (landfill diversion, CO2e avoidance, energy conserved)."
+    },
+    {
+      "id": "doc-002-architecture",
+      "category": "system_architecture",
+      "title": "Architecture & Database Schema",
+      "tags": ["supabase", "postgresql", "rls", "schema", "react"],
+      "content": "The platform is built with React 18, Vite, Tailwind CSS, and Supabase (PostgreSQL 15). The database includes four primary tables: 1) public.profiles (user accounts with roles: generator, buyer, admin), 2) public.listings (material listings with status: OPEN, REQUESTED, ACCEPTED, COMPLETED, CLOSED), 3) public.requirements (buyer demand specs with min_quantity, max_quantity, acceptable_condition array, and active status), and 4) public.exchange_requests (transactions with status: REQUESTED, ACCEPTED, REJECTED, COMPLETED). PostgreSQL Row Level Security (RLS) protects data isolation."
+    },
+    {
+      "id": "doc-003-matching-engine",
+      "category": "algorithm",
+      "title": "Smart Matching Engine Scoring Rules",
+      "tags": ["matching", "algorithm", "compatibility", "scoring", "weights"],
+      "content": "The Smart Matching Engine uses a 100% transparent rule-based algorithm to compute compatibility scores (0-100%): Final Score = Material Score (40%) + Quantity Score (20%) + Location Score (20%) + Condition Score (10%) + Availability Score (10%). Material match requires strict equality (40 pts or 0). Quantity scores 20 pts if within [min_quantity, max_quantity], and 12-18 pts if within ±30% margin. Location scores 20 pts for same industrial zone (~1.2 km), 19 pts for same metro (~4.8 km), 16 pts for adjacent cluster (~22 km), 15 pts for shared logistics zone, and 10 pts for distant (~85 km). Condition scores 10 pts for exact match and 5 pts for adjacent grade. Availability scores 10 pts if listing is OPEN and requirement is active."
+    },
+    {
+      "id": "doc-004-impact-calculations",
+      "category": "environmental_metrics",
+      "title": "Verified Circular Impact & Carbon Offsets",
+      "tags": ["impact", "co2", "carbon accounting", "landfill diversion", "energy"],
+      "content": "Impact metrics are computed strictly from COMPLETED exchanges: 1) Total Landfill Diversion (kg) = sum of completed listing weights. 2) CO2e Emissions Avoided = total kg * 1.45 kg CO2e/kg. 3) Energy Conserved = total kg * 2.75 kWh/kg. 4) Landfill Volume Diverted = total kg * 0.0035 m³/kg. Category factors: Plastic/PET gives 10 Green Points/kg and 0.85 kg CO2e; Paper/Cardboard gives 6 points and 0.60 kg CO2e; Metal gives 12 points and 1.20 kg CO2e; Textile/Cotton gives 8 points and 1.50 kg CO2e; Glass gives 5 points and 0.30 kg CO2e; E-Waste gives 9 points and 0.90 kg CO2e; Organic Waste gives 4 points and 0.40 kg CO2e."
+    },
+    {
+      "id": "doc-005-materials",
+      "category": "material_specifications",
+      "title": "Standard Material Taxonomies & Grading Standards",
+      "tags": ["plastic", "pet", "paper", "cardboard", "metal", "glass", "textile", "e-waste", "organic"],
+      "content": "Accepted materials: 1) Plastic/PET: baled post-industrial bottles, clean preform regrind, washed flakes, moisture under 2%, no PVC. 2) Paper/Cardboard: OCC 11 double-wall corrugated cartons, moisture under 12%, unsoiled. 3) Glass: amber, flint/clear, green cullet crushed to 15-25mm, free of ceramic stones. 4) Metal: clean aluminum alloy 6061/6063 CNC extrusions and bare bright #1 copper wire strippings. 5) Textile/Cotton: 100% un-dyed organic cotton fabric cuttings and spinning waste. 6) Organic/Food Waste: spent brewer grain, sugarcane bagasse, vegetable trimmings for biogas/compost. 7) Electronic Waste: decommissioned server motherboards, PSUs, RAM modules for precious metal reclamation."
+    },
+    {
+      "id": "doc-006-exchange-lifecycle",
+      "category": "workflow",
+      "title": "Exchange Request Transaction Lifecycle",
+      "tags": ["workflow", "transactions", "lifecycle", "order"],
+      "content": "The exchange workflow follows 4 stages: 1) OPEN: Generator publishes listing, searchable by all buyers. 2) REQUESTED: Buyer submits exchange request; listing status automatically changes to REQUESTED to prevent race conditions. 3) ACCEPTED: Generator reviews buyer terms and accepts request; both listing and request lock into ACCEPTED state for transport coordination. 4) COMPLETED: Either party confirms physical receipt; listing becomes COMPLETED, permanently crediting environmental impact metrics to the Verified Circular Impact Hub. If rejected, listing reverts to OPEN."
+    },
+    {
+      "id": "doc-007-current-inventory",
+      "category": "marketplace_data",
+      "title": "Active Marketplace Listings and Buyer Demands",
+      "tags": ["listings", "inventory", "buyers", "seed data"],
+      "content": "Active Listings: 1) 500 kg Plastic/PET flakes (Good, Mumbai, EcoPack). 2) 1,200 kg HDPE Pellets (Excellent, Mumbai, EcoPack). 3) 850 kg OCC Corrugated Cardboard (Excellent, Mumbai, EcoPack). 4) 350 kg Glass Cullet (Good, Thane, EcoPack). 5) 420 kg Aluminum Alloy 6061 Cutoffs (Good, Bengaluru, Metro Electronics). 6) 250 kg Copper Wire Remnants (Fair, Bengaluru, Metro Electronics). 7) 600 kg Cotton Cuttings (Good, Surat, EcoPack). 8) 1,500 kg Brewer Grain Mash (Fair, Pune, GreenHarvest). 9) 180 units Server Motherboards (Fair, Bengaluru, Metro Electronics). Buyer Demands: ReLoop Polymer Upcyclers needs 300-700 kg Plastic/PET in Navi Mumbai (95% match with 500 kg PET listing) and 1,000-2,500 kg Plastic/PET in Mumbai; Apex Fiber needs 500-1,200 kg Paper/Cardboard in Mumbai."
+    }
+  ],
+  "faq": [
+    {
+      "question": "How does the matching engine calculate location compatibility?",
+      "answer": "Scores are 20 points for identical industrial zones, 19 points for the same city/metro district, 16 points for adjacent corridors (e.g., Mumbai to Navi Mumbai), 15 points for shared logistics terms, and 10 points for inter-district transport."
+    },
+    {
+      "question": "What is the CO2e offset multiplier for recycled materials?",
+      "answer": "The platform uses 1.45 kg CO2e avoided per kg of verified completed material exchange, reflecting avoided virgin feedstock production and landfill emissions."
+    },
+    {
+      "question": "Which buyer demand matches the 500 kg PET bottle scrap listing?",
+      "answer": "ReLoop Polymer Upcyclers in Navi Mumbai has a requirement for 300-700 kg of Plastic/PET in Good or Excellent condition, yielding a 95% compatibility match."
+    }
+  ]
+}
