@@ -1,6 +1,6 @@
 # ♻️ GreenLoop — Smart Circular Economy & Industrial Waste Exchange Platform
 
-> **Hackathon Project:** CSI Enigma 5.0 | **Team:** Team Rocket  
+> **Hackathon Project:** CSI Enigma 5.0 | **Team:** Team Rocket (Members: Krutika Chaskar, Pratyush Deshmukh, Ritika Devendra, Rohit Hazra)
 > **Domain:** Circular Economy • B2B Industrial Waste Exchange • Algorithmic Matching • Carbon Accounting • RAG AI
 
 ---
@@ -88,7 +88,7 @@ Environmental metrics are calculated **strictly from completed physical batches*
 
 ---
 
-## 💡 What This Project Demonstrates (For Internships & Interviews)
+## 💡 What This Project Demonstrates
 
 * **Full-Stack Engineering:** Developed a modular React architecture with custom hooks (`useAuth`), reactive UI modals, and clean service-layer abstractions (`matchingService`, `impactService`, `listingService`).
 * **Relational Database Design:** Built a normalized PostgreSQL schema with foreign key cascades, automated triggers, and enterprise-grade Row-Level Security (RLS).
@@ -127,5 +127,5 @@ Runs end-to-end verification of the 100% weighted matching formula and carbon im
 
 ## 👥 Contributors
 
-**Team Rocket** — CSI Enigma 5.0 Hackathon
+**Team Rocket** — Krutika Chaskar, Pratyush Deshmukh, Ritika Devendra, Rohit Hazra
 * *Focus Areas:* Full-Stack Development, Supabase Architecture, Rule-Based Matching Algorithms, Carbon Accounting, and RAG AI.
